@@ -5,7 +5,7 @@
 @using WebApplication1.Models.ViewModels
 
 @inject UserManager<IdentityUser> UserManager
-
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
     ViewData[index: "Title"] = "Details";
@@ -29,11 +29,19 @@
         @foreach (var item in Model.Pictures)
         {
             <div style="padding: 5px">
-                <img src="@item.Path" width="300px" alt="Alternate Text"/>
+                <img src="@item.Path" width="300px" alt="Alternate Text" />
             </div>
         }
     </div>
-    @await Html.PartialAsync("_CreateCommentPartial", new CreateCommentViewModel())
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @await Html.PartialAsync("_CreateCommentPartial", new CreateCommentViewModel())
+    }
+    else
+    {
+        <h3>Вы не может оставлять комментарии пока не зарегистрируетесь</h3>
+    }
+
     <div class="col-md-12" style="overflow: hidden">
         @foreach (var item in Model.Comments)
         {

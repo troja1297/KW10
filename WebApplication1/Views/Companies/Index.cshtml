@@ -1,4 +1,6 @@
-﻿@model IEnumerable<WebApplication1.Models.ViewModels.DetailsCompanyViewModel>
+﻿@model PagedList.IPagedList<WebApplication1.Models.ViewModels.DetailsCompanyViewModel>
+
+
 
 @{
     ViewData["Title"] = "Index";
@@ -9,6 +11,7 @@
 <div style="display: flex; flex-wrap: wrap;">
     @foreach (var item in Model)
     {
+
 
         <div class="card" style="width: 32%; height: 300px; margin: 5px; padding: 10px; display: flex; flex-direction: column; height: 100%; border: 1px gray solid">
             <div style="flex: 1 0 auto;">
@@ -24,5 +27,39 @@
                 </div>
             </div>
         </div>
+    }
+    
+</div>
+<div>
+    Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+    из @Model.PageCount
+
+    @if (Model.HasPreviousPage)
+    {
+        @Html.ActionLink("<<", "Index", new { page = 1, search_word = ViewBag.Search_word })
+        @Html.Raw(" ")
+        ;
+        @Html.ActionLink("< Предыдущая", "Index", new { page = Model.PageNumber - 1, search_word = ViewBag.Search_word })
+    }
+    else
+    {
+        @:<<
+        @Html.Raw(" ")
+        ;
+        @:< Предыдущая
+    }
+
+    @if (Model.HasNextPage)
+    {
+        @Html.ActionLink("Следующая >", "Index", new { page = Model.PageNumber + 1, search_word = ViewBag.Search_word })
+        @Html.Raw(" ")
+        ;
+        @Html.ActionLink(">>", "Index", new { page = Model.PageCount, search_word = ViewBag.Search_word })
+    }
+    else
+    {
+        @:Следующая >
+        @Html.Raw(" ")
+        @:>>
     }
 </div>

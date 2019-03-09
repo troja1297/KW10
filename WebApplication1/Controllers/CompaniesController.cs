@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PagedList;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.ViewModels;
@@ -21,7 +22,7 @@ namespace WebApplication1.Controllers
         private readonly FileUploadService _fileUploadService;
         private IHostingEnvironment _environment;
         private UserManager<IdentityUser> _userManager;
-
+        private const int pageSize = 3;
         public CompaniesController(
             ApplicationDbContext context,
             IHostingEnvironment environment,
@@ -35,7 +36,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Companies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
             List<DetailsCompanyViewModel> vm = new List<DetailsCompanyViewModel>();
 
@@ -46,7 +47,7 @@ namespace WebApplication1.Controllers
                 var pictures = _context.Pictures
                     .Where(o => o.CompanyId == company.Id)
                     .Where(o => o.CommentId == null).ToList();
-                var rating = _context.Comments
+                var rating = _context.Comments.Where(c => c.CompanyId == company.Id)
                     .Select(c => c.Rating);
                 vm.Add(new DetailsCompanyViewModel()
                 {
@@ -59,7 +60,8 @@ namespace WebApplication1.Controllers
                     Rating = (double) rating.Sum() / rating.Count()
                 });
             }
-            return View(vm);
+            IPagedList<DetailsCompanyViewModel> institutions = vm.ToPagedList(page, pageSize);
+            return View(institutions);
         }
 
         // GET: Companies/Details/5
@@ -84,8 +86,19 @@ namespace WebApplication1.Controllers
             var comments = _context.Comments
                 .Where(c => c.CompanyId == id).ToList();
 
-            var rating = _context.Comments
+            var rating = _context.Comments.Where(c => c.CompanyId == id)
                 .Select(c => c.Rating);
+            string userId = "";
+            if (!User.Identity.IsAuthenticated)
+            {
+                userId = "empty";
+            }
+            else
+            {
+                userId = _userManager.GetUserAsync(User).Result.Id;
+            }
+           
+
             DetailsCompanyViewModel vm = new DetailsCompanyViewModel()
             {
                 Description = company.Descriprion,
@@ -97,9 +110,9 @@ namespace WebApplication1.Controllers
                 Rating = (double) rating.Sum() / rating.Count(),
                 Comments = comments,
                 Pictures = pictures,
-                UserId = _userManager.GetUserAsync(User).Result.Id,
+                UserId = userId,
             };
-            ViewData["userId"] = _userManager.GetUserAsync(User).Result.Id;
+            ViewData["userId"] = userId;
             ViewData["companyId"] = id;
             return View(vm);
         }
