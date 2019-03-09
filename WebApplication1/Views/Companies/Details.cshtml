@@ -1,0 +1,48 @@
+﻿@model DetailsCompanyViewModel
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using Microsoft.EntityFrameworkCore
+@using WebApplication1.Models.ViewModels
+
+@inject UserManager<IdentityUser> UserManager
+
+
+@{
+    ViewData[index: "Title"] = "Details";
+}
+
+<div>
+    <div class="col-md-12" style="margin-top: 30px;">
+        <div class="col-md-6">
+            <h4>@Model.Title</h4>
+
+            <div>@Model.Description</div>
+
+            <div>@Model.Rating</div>
+        </div>
+        <div class="col-md-6">
+            <img src="@Model.PhotoPath" style="padding: 10px" width="500px" alt="Alternate Text" />
+        </div>
+    </div>
+    <div class="col-md-12"><h2>Gallery</h2></div>
+    <div class="col-md-12" style="display: flex; height: 300px; overflow: scroll;">
+        @foreach (var item in Model.Pictures)
+        {
+            <div style="padding: 5px">
+                <img src="@item.Path" width="300px" alt="Alternate Text"/>
+            </div>
+        }
+    </div>
+    @await Html.PartialAsync("_CreateCommentPartial", new CreateCommentViewModel())
+    <div class="col-md-12" style="overflow: hidden">
+        @foreach (var item in Model.Comments)
+        {
+            <div style="padding: 5px; margin: 5px; border: 1px gray solid">
+                <div style="font-weight: bold">On @item.Date, @UserManager.Users.FirstOrDefaultAsync(i => i.Id == item.UserId).Result.UserName said:</div>
+                <div>@item.Body</div>
+                <div>@item.Rating</div>
+            </div>
+        }
+
+    </div>
+</div>

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
 namespace WebApplication1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190309085612_RemoveForeighnKeys")]
+    partial class RemoveForeighnKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,13 +232,11 @@ namespace WebApplication1.Data.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<string>("UserApplicationId");
-
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserApplicationId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Companies");
                 });
@@ -257,6 +257,10 @@ namespace WebApplication1.Data.Migrations
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("UserApplicationId");
 
@@ -327,14 +331,22 @@ namespace WebApplication1.Data.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Company", b =>
                 {
-                    b.HasOne("WebApplication1.Models.UserApplication")
+                    b.HasOne("WebApplication1.Models.UserApplication", "UserApplication")
                         .WithMany("Companies")
-                        .HasForeignKey("UserApplicationId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Picture", b =>
                 {
-                    b.HasOne("WebApplication1.Models.UserApplication")
+                    b.HasOne("WebApplication1.Models.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentId");
+
+                    b.HasOne("WebApplication1.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("WebApplication1.Models.UserApplication", "UserApplication")
                         .WithMany("Pictures")
                         .HasForeignKey("UserApplicationId");
                 });
