@@ -45,18 +45,18 @@ namespace WebApplication1.Controllers
             foreach (Company company in applicationDbContext)
             {
                 var pictures = _context.Pictures
-                    .Where(o => o.CompanyId == company.Id)
-                    .Where(o => o.CommentId == null).ToList();
+                    .Where(o => o.CompanyId == company.Id).ToList();
                 var rating = _context.Comments.Where(c => c.CompanyId == company.Id)
                     .Select(c => c.Rating);
+                var comments = _context.Comments.Where(c => c.CompanyId == company.Id);
                 vm.Add(new DetailsCompanyViewModel()
                 {
                     Description = company.Descriprion,
                     PhotoPath = company.PhotoPath,
                     Title = company.Title,
-                    CommentCount = company.CommentCount,
+                    CommentCount = comments.ToList().Count,
                     Id = company.Id,
-                    PicturesCount = pictures.Count,
+                    PicturesCount = pictures.ToList().Count,
                     Rating = (double) rating.Sum() / rating.Count()
                 });
             }
@@ -104,7 +104,7 @@ namespace WebApplication1.Controllers
                 Description = company.Descriprion,
                 PhotoPath = company.PhotoPath,
                 Title = company.Title,
-                CommentCount = company.CommentCount,
+                CommentCount = comments.Count,
                 Id = company.Id,
                 PicturesCount = pictures.Count,
                 Rating = (double) rating.Sum() / rating.Count(),

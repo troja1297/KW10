@@ -48,7 +48,7 @@
             <div style="padding: 5px; margin: 5px; border: 1px gray solid">
                 <div style="font-weight: bold">On @item.Date, @UserManager.Users.FirstOrDefaultAsync(i => i.Id == item.UserId).Result.UserName said:</div>
                 <div>@item.Body</div>
-                <div>@item.Rating</div>
+                <div style="font-weight: bold"><span>Рейтинг: </span> @item.Rating</div>
             </div>
         }
 

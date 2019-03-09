@@ -19,8 +19,8 @@
                 <div class="card-body">
                     <h5 class="card-title">@item.Title</h5>
                     <p class="card-text text-justify" style="word-wrap: break-word; overflow: hidden;">@item.Description</p>
-                    <p>@item.Rating</p>
-                    <p>@item.PicturesCount</p>
+                    <p>(@item.Rating, @item.CommentCount reviws)</p>
+                    <p id="star">@item.PicturesCount photos</p>
                 </div>
                 <div class="card-footer text-muted" style="flex: 0 0 auto;">
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Go somewhere</a>
@@ -63,3 +63,14 @@
         @:>>
     }
 </div>
+
+<script>
+    window.onload = function() {
+        var a = $("#star").text();
+        for (i = 0; i >= a; a++) {
+            $("#star").html += "<span>☆</span>";
+        }
+    };
+    
+
+</script>
